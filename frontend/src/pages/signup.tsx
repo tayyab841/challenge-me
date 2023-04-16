@@ -7,21 +7,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Container = styled.div`
+display: flex;
+flex-wrap: wrap;
 margin-top: 120px;
 margin-bottom: 120px;
-display: flex;
-flex-direction: column;
-flex-wrap: wrap;
 align-content: center;
+flex-direction: column;
 justify-content: center;
 .card { width: 500px; }
-.card-body button {
-  width: 300px;
-}`;
+.card-body button { width: 300px; }`;
 
 export default function Signup(): JSX.Element {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -39,8 +37,10 @@ export default function Signup(): JSX.Element {
       password: target.password.value
     })
       .then(function (response) {
+        console.log('response',response);
         dispatch(loginSuccess(response.data.user_name));
         localStorage.setItem("user_token", response.data.token);
+        localStorage.setItem("user_name", response.data.data.name);
         navigate('/');
       })
       .catch(function (error) {
@@ -48,7 +48,6 @@ export default function Signup(): JSX.Element {
         setLoading(false);
       });
   }
-
 
   return (
     <Layout>

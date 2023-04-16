@@ -1,14 +1,24 @@
 import request from 'supertest';
-import app from '../app';
 
+import app from '../app';
+import User from '../models/user';
 
 const clearDatabase = async () => {
-    const res = await request(app)
-        .delete('/deleteAll');
+    try {
+        await User.deleteMany({ email: { $in : [
+                'user@test.com',
+                'newuser@test.com',
+                'user@othertest.com'
+            ]}});
+    } catch (err) {
+        console.log("error in clearing database:",err);
+    }
 }
 
 describe('Testing User-Signup', () => {
+    // deleting all the test users
     afterAll(() => clearDatabase());
+
     test('Empty Name', async () => {
         const res = await request(app)
             .post('/signup')
@@ -22,6 +32,7 @@ describe('Testing User-Signup', () => {
         expect(res.body).toEqual("Name cannot be empty!");
         expect(res.status).toEqual(400);
     });
+
     test('Empty Email', async () => {
         const res = await request(app)
             .post('/signup')
@@ -35,6 +46,7 @@ describe('Testing User-Signup', () => {
         expect(res.body).toEqual("Email cannot be empty!");
         expect(res.status).toEqual(400);
     });
+
     test('Empty Password', async () => {
         const res = await request(app)
             .post('/signup')
@@ -48,6 +60,7 @@ describe('Testing User-Signup', () => {
         expect(res.body).toEqual("Password cannot be empty!");
         expect(res.status).toEqual(400);
     });
+
     test('Incorrect email', async () => {
         const res = await request(app)
             .post('/signup')
@@ -61,6 +74,7 @@ describe('Testing User-Signup', () => {
         expect(res.body).toEqual("Provide Valid email");
         expect(res.status).toEqual(400);
     });
+
     test('Existing User', async () => {
         // create a test user
         await request(app)

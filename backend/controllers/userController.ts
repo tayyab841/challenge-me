@@ -6,6 +6,7 @@ import User from '../models/user';
 import { getToken } from '../utilities/getToken';
 import { JsonWebTokenError } from 'jsonwebtoken';
 
+// temp actions
 export async function getAllUsers(req: Request, res: Response, next: NextFunction) {
     try {
         const users = await User.find({}).exec();
@@ -15,34 +16,7 @@ export async function getAllUsers(req: Request, res: Response, next: NextFunctio
     }
 }
 
-export async function deleteAllUsers(req: Request, res: Response, next: NextFunction) {
-    try {
-        const data = await User.deleteMany({});
-        res.status(200).json({ data: data });
-    } catch (err) {
-        res.status(500).json({ err: err });
-    }
-}
-
-export async function decodeUserToken(req: Request, res: Response, next: NextFunction) {
-    const { token } = req.body;
-
-    if (!token) return res.status(400).json('Token is required!');
-
-    const decoded = jwt.verify(token, `${process.env.TOKEN_KEY}`);
-
-    if (typeof (decoded) !== "object") {
-        return res.status(400).json("Invalid Token!");
-    }
-
-    try {
-        const user = await User.findById(decoded.userId);
-        res.status(200).json({ user_name: user?.name });
-    } catch (error) {
-        res.status(400).json("Invalid Token!");
-    }
-}
-
+// user actions
 export async function userSignup(req: Request, res: Response, next: NextFunction) {
     const { name, email, password } = req.body;
 
@@ -84,7 +58,7 @@ export async function userLogin(req: Request, res: Response, next: NextFunction)
     if (await bcrypt.compare(password, user.password)) {
         const token = getToken(user._id + '');
         res.cookie('jwt_token', token, { httpOnly: true, maxAge: 1000 * 3600 * 24 });
-        res.status(201).json({ user_name: user.name, token: token });
+        res.status(200).json({ user_name: user.name, token: token });
     } else {
         res.status(401).json("Invalid Credentials!");
     }

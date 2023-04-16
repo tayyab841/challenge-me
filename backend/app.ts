@@ -17,13 +17,14 @@ async function main() {
     await mongoose.connect(mongoDB);
 }
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Express + TypeScript');
-});
+// app.get('/', (req: Request, res: Response) => {
+//     res.send('Express + TypeScript');
+// });
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
+app.use(express.static('build'));
+app.use(express.urlencoded({ extended: false }));
 
 app.use('/', userRoutes);
 
