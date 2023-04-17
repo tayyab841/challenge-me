@@ -30,12 +30,11 @@ export default function Login(): JSX.Element {
       password: { value: string };
     };
     dispatch(loginInit());
-    axios.post(process.env.REACT_APP_API_URL + '/login', {
+    axios.post('/login', {
       email: target.email.value,
       password: target.password.value
     })
       .then(function (response) {
-        console.log('response',response);
         dispatch(loginSuccess(response.data.user_name));
         localStorage.setItem("user_token", response.data.token);
         localStorage.setItem("user_name", response.data.user_name);

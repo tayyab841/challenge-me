@@ -3,13 +3,13 @@ import Layout from '../layout';
 import styled from 'styled-components';
 
 const Container = styled.div`
+display: flex;
+flex-wrap: wrap;
 margin-top: 120px;
 margin-top: 120px;
 margin-bottom: 120px;
-display: flex;
-flex-direction: column;
-flex-wrap: wrap;
 align-content: center;
+flex-direction: column;
 justify-content: center;`;
 
 export default function Home(): JSX.Element {

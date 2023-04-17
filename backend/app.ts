@@ -17,10 +17,6 @@ async function main() {
     await mongoose.connect(mongoDB);
 }
 
-// app.get('/', (req: Request, res: Response) => {
-//     res.send('Express + TypeScript');
-// });
-
 app.use(cors());
 app.use(express.json());
 app.use(express.static('build'));

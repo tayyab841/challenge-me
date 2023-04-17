@@ -31,13 +31,12 @@ export default function Signup(): JSX.Element {
       password: { value: string };
     };
     setLoading(true);
-    axios.post(process.env.REACT_APP_API_URL + '/signup', {
+    axios.post('/signup', {
       name: target.name.value,
       email: target.email.value,
       password: target.password.value
     })
       .then(function (response) {
-        console.log('response',response);
         dispatch(loginSuccess(response.data.user_name));
         localStorage.setItem("user_token", response.data.token);
         localStorage.setItem("user_name", response.data.data.name);
@@ -52,7 +51,7 @@ export default function Signup(): JSX.Element {
   return (
     <Layout>
       <Container>
-        <h1 className="text-center my-4 text-white">Sign Up Page</h1>
+        <h1 className="text-center my-4 text-white">Sign Up</h1>
         <div className="card">
           <div className="card-body">
             <form onSubmit={handleSingup}>

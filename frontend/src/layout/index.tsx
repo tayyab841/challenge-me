@@ -23,8 +23,6 @@ export default function Layout(props: Props): JSX.Element {
   useEffect(() => {
     const userToken = localStorage.getItem("user_token");
     const userName = localStorage.getItem("user_name");
-    console.log('userToken',userToken);
-    console.log('userName', userName);
     if (userToken && userName) {
       dispatch(loginSuccess(userName));
     }

@@ -14,6 +14,7 @@ export default function Header(): JSX.Element {
 
   const handleLogout = () => {
     localStorage.removeItem("user_token");
+    localStorage.removeItem("user_name");
     dispatch(loginSuccess(''));
   }
 
