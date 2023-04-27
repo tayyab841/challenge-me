@@ -31,7 +31,7 @@ export default function Signup(): JSX.Element {
       password: { value: string };
     };
     setLoading(true);
-    axios.post('/signup', {
+    axios.post(process.env.REACT_APP_API_URL + '/signup', {
       name: target.name.value,
       email: target.email.value,
       password: target.password.value

@@ -30,7 +30,7 @@ export default function Login(): JSX.Element {
       password: { value: string };
     };
     dispatch(loginInit());
-    axios.post('/login', {
+    axios.post(process.env.REACT_APP_API_URL + '/login', {
       email: target.email.value,
       password: target.password.value
     })
