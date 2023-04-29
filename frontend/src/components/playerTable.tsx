@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Player } from "../common/types";
 
 const Container = styled.div`
 .table-title {
@@ -7,7 +8,12 @@ const Container = styled.div`
     font-size: 36px;
 }`;
 
-export default function PlayerTable(): JSX.Element {
+interface Props {
+  players: Player[];
+}
+
+export default function PlayerTable(props: Props): JSX.Element {
+  const { players } = props;
   return (
     <Container>
       <table className="table text-white">
@@ -22,21 +28,15 @@ export default function PlayerTable(): JSX.Element {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">Mark</th>
-            <td>Online</td>
-            <td><button className="btn btn-outline-primary text-white border-white" type="button">Challenge</button></td>
-          </tr>
-          <tr>
-            <th scope="row">Jacob</th>
-            <td>Offline</td>
-            <td><button disabled className="btn btn-outline-primary text-secondary border-white" type="button">Challenge</button></td>
-          </tr>
-          <tr>
-            <th scope="row">Larry</th>
-            <td>Online</td>
-            <td><button className="btn btn-outline-primary text-white border-white" type="button">Challenge</button></td>
-          </tr>
+          {players.map((player) => (
+            <tr key={player._id}>
+              <th scope="row">{player.name}</th>
+              <td>{player.status}</td>
+              <td>
+                <button disabled={player.status === 'offline'} className="btn btn-outline-primary text-white border-white" type="button">Challenge</button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </Container>

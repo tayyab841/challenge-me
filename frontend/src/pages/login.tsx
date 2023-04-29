@@ -1,9 +1,9 @@
 import React from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Layout from '../layout';
+import userLogin from '../services/userLogin';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { loginInit, loginSuccess, loginFail } from '../store/reducers/user';
 
@@ -11,7 +11,6 @@ const Container = styled.div`
 display: flex;
 flex-wrap: wrap;
 margin-top: 120px;
-margin-bottom: 120px;
 align-content: center;
 flex-direction: column;
 justify-content: center;
@@ -30,18 +29,16 @@ export default function Login(): JSX.Element {
       password: { value: string };
     };
     dispatch(loginInit());
-    axios.post(process.env.REACT_APP_API_URL + '/login', {
-      email: target.email.value,
-      password: target.password.value
-    })
-      .then(function (response) {
-        dispatch(loginSuccess(response.data.user_name));
-        localStorage.setItem("user_token", response.data.token);
-        localStorage.setItem("user_name", response.data.user_name);
+    userLogin({ email: target.email.value, password: target.password.value })
+      .then((response) => {
+        dispatch(loginSuccess({ userName: response.userName, userId: response.userId, token: response.token }));
+        localStorage.setItem("user_token", response.token || '');
+        localStorage.setItem("user_name", response.userName || '');
+        localStorage.setItem("user_id", response.userId || '');
         navigate('/');
       })
-      .catch(function (error) {
-        dispatch(loginFail(error.response.data));
+      .catch((error) => {
+        dispatch(loginFail(error.msg));
       });
   }
 

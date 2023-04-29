@@ -21,10 +21,11 @@ export default function Layout(props: Props): JSX.Element {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const userToken = localStorage.getItem("user_token");
+    const userId = localStorage.getItem("user_id");
     const userName = localStorage.getItem("user_name");
-    if (userToken && userName) {
-      dispatch(loginSuccess(userName));
+    const userToken = localStorage.getItem("user_token");
+    if (userToken && userName && userId) {
+      dispatch(loginSuccess({ userName: userName, userId: userId }));
     }
   }, [dispatch]);
 

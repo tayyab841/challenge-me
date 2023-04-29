@@ -1,14 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { RootState } from '..';
+import { User } from '../../common/types';
 
 export interface UserState {
-    user: string,
-    isLoading: boolean,
-    error: string
+    user: User,
+    error: string,
+    isLoading: boolean
 }
 
+const EMPTY_USER = { userId: '', userName: '', token: '' };
+
 const initialState: UserState = {
-    user: '',
+    user: EMPTY_USER,
     isLoading: false,
     error: ''
 }
@@ -18,7 +21,7 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         loginInit: (state) => {
-            state.user = '';
+            state.user = EMPTY_USER;
             state.isLoading = true;
             state.error = '';
         },
@@ -28,7 +31,7 @@ export const userSlice = createSlice({
             state.error = '';
         },
         loginFail: (state, action) => {
-            state.user = '';
+            state.user = EMPTY_USER;
             state.isLoading = false;
             state.error = action.payload;
         }

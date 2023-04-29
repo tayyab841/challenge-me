@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import express, { Express, Request, Response } from 'express';
 
-import userRoutes from './routes/userRoutes'
+import userRoutes from './routes/userRoutes';
+import authRoutes from './routes/authRoutes';
 
 dotenv.config();
 const app: Express = express();
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use(express.static('build'));
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/', userRoutes);
+app.use('/user/', userRoutes);
+app.use('/auth/', authRoutes);
 
 export default app;

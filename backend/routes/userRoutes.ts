@@ -1,13 +1,11 @@
 import express from 'express';
-const router = express.Router();
 import {
-	userLogin,
-	userSignup,
-	getAllUsers,
+	getPlayerStats,
 } from '../controllers/userController'
+import verifyToken from '../middlewares/authMiddleware';
 
-router.post('/login', userLogin);
-router.post('/signup', userSignup);
-router.get('/getAll', getAllUsers);
+const router = express.Router();
+
+router.get('/playerStats', verifyToken, getPlayerStats)
 
 export = router;

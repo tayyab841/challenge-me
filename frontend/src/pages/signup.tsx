@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import Layout from '../layout';
-import axios from 'axios';
-import { useAppDispatch } from '../hooks';
-import { loginSuccess } from '../store/reducers/user';
-import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+import Layout from '../layout';
+import { useAppDispatch } from '../hooks';
+import userSignup from '../services/userSignup';
+import { loginSuccess } from '../store/reducers/user';
 
 const Container = styled.div`
 display: flex;
 flex-wrap: wrap;
 margin-top: 120px;
-margin-bottom: 120px;
 align-content: center;
 flex-direction: column;
 justify-content: center;
@@ -31,15 +31,16 @@ export default function Signup(): JSX.Element {
       password: { value: string };
     };
     setLoading(true);
-    axios.post(process.env.REACT_APP_API_URL + '/signup', {
+    userSignup({
       name: target.name.value,
       email: target.email.value,
       password: target.password.value
     })
       .then(function (response) {
-        dispatch(loginSuccess(response.data.user_name));
-        localStorage.setItem("user_token", response.data.token);
-        localStorage.setItem("user_name", response.data.data.name);
+        localStorage.setItem("user_id", response.userId || '');
+        localStorage.setItem("user_token", response.token || '');
+        localStorage.setItem("user_name", response.userName || '');
+        dispatch(loginSuccess({ userName: response.userName, userId: response.userId, token: response.token }));
         navigate('/');
       })
       .catch(function (error) {

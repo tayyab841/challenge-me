@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Player } from "../common/types";
 
 const Container = styled.div`
 .table-title {
@@ -7,7 +8,15 @@ const Container = styled.div`
     font-size: 36px;
 }`;
 
-export default function StatsTable(): JSX.Element {
+interface Props {
+  players: Player[];
+}
+
+export default function StatsTable(props: Props): JSX.Element {
+  const { players } = props;
+
+  let rank = 0;
+
   return (
     <Container>
       <table className="table text-white">
@@ -23,24 +32,17 @@ export default function StatsTable(): JSX.Element {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>56</td>
-            <td>89</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>78</td>
-            <td>76</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>Larry the Bird</td>
-            <td>45</td>
-            <td>64</td>
-          </tr>
+          {players.map((player) => {
+            rank++;
+            return (
+              <tr key={player._id}>
+                <th scope="row">{rank}</th>
+                <td>{player.name}</td>
+                <td>{player.games_played}</td>
+                <td>{player.win_percentage}</td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </Container>
