@@ -31,10 +31,10 @@ export default function Login(): JSX.Element {
     dispatch(loginInit());
     userLogin({ email: target.email.value, password: target.password.value })
       .then((response) => {
-        dispatch(loginSuccess({ userName: response.userName, userId: response.userId, token: response.token }));
+        localStorage.setItem("user_id", response.userId || '');
         localStorage.setItem("user_token", response.token || '');
         localStorage.setItem("user_name", response.userName || '');
-        localStorage.setItem("user_id", response.userId || '');
+        dispatch(loginSuccess({ userName: response.userName, userId: response.userId, token: response.token }));
         navigate('/');
       })
       .catch((error) => {

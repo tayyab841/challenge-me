@@ -25,7 +25,7 @@ export default function Layout(props: Props): JSX.Element {
     const userName = localStorage.getItem("user_name");
     const userToken = localStorage.getItem("user_token");
     if (userToken && userName && userId) {
-      dispatch(loginSuccess({ userName: userName, userId: userId }));
+      dispatch(loginSuccess({ userName: userName, userId: userId, token: userToken }));
     }
   }, [dispatch]);
 

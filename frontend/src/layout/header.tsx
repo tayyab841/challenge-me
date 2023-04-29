@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import { Link } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import logoSM from "../assets/images/logo-sm.png";
-import { loginSuccess } from "../store/reducers/user";
+import { loginFail, loginInit, loginSuccess } from "../store/reducers/user";
 import { useAppDispatch, useAppSelector } from "../hooks";
+import userLogout from "../services/userlogout";
 
 const Container = styled.nav`
 padding-left: 50px;
@@ -21,10 +22,17 @@ export default function Header(): JSX.Element {
   const loginState = useAppSelector((state) => state.user);
 
   const handleLogout = () => {
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("user_name");
-    localStorage.removeItem("user_token");
-    dispatch(loginSuccess({ userName: '', userId: '', token: '' }));
+    dispatch(loginInit());
+    userLogout({ token: loginState.user.token })
+      .then(() => {
+        localStorage.removeItem("user_id");
+        localStorage.removeItem("user_name");
+        localStorage.removeItem("user_token");
+        dispatch(loginSuccess({ userName: '', userId: '', token: '' }));
+      })
+      .catch((err) => {
+        dispatch(loginFail(err.msg))
+      })
   }
 
   return (

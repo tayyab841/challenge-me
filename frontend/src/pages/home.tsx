@@ -22,14 +22,13 @@ export default function Home(): JSX.Element {
   const [players, setPlayers] = useState<Player[]>([]);
 
   useEffect(() => {
-    getPlayerStats({ token: localStorage.getItem('user_token') || '' })
-      .then((response) => {
-        setPlayers(response.players || []);
-      })
-      .catch((error) => {
-        console.log('error', error);
-      });
-  }, []);
+    if (loggedInUser.user.token) {
+      getPlayerStats({ token: loggedInUser.user.token })
+        .then((response) => {
+          setPlayers(response.players || []);
+        });
+    }
+  }, [loggedInUser]);
 
   return (
     <Layout>

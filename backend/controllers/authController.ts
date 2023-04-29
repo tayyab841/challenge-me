@@ -52,11 +52,11 @@ export async function userLogin(req: Request, res: Response, next: NextFunction)
     }
 }
 
-export default async function userLogout(req: Request, res: Response) {
+export async function userLogout(req: Request, res: Response) {
     const requestingUser = res.locals.signedInUser;
     try {
         await User.updateOne({ email: requestingUser.email }, { status: 'offline' });
-        res.status(200);
+        res.status(200).json("Logged out Successfully!");
     } catch (error) {
         res.status(400);
     }
