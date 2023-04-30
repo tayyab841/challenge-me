@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { toast } from "react-toastify";
+import React, { useEffect, useState } from "react";
+
 import { Player } from "../common/types";
-import { useAppDispatch, useAppSelector } from "../hooks";
 import getPlayerStats from "../services/getPlayerStats";
-import { loginFail, loginInit, loginSuccess } from "../store/reducers/user";
-import userLogout from "../services/userLogout";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { selectUser } from "../store/reducers/user";
 
 const Container = styled.div`
 .table-title {
@@ -13,9 +14,9 @@ const Container = styled.div`
 }`;
 
 export default function StatsTable(): JSX.Element {
-  const [players, setPlayers] = useState<Player[]>([]);
-  const loggedInUser = useAppSelector(state => state.user.user);
   const dispatch = useAppDispatch();
+  const [players, setPlayers] = useState<Player[]>([]);
+  const loggedInUser = useAppSelector(selectUser).user;
 
   let rank = 0;
 
@@ -25,21 +26,8 @@ export default function StatsTable(): JSX.Element {
         .then((response) => {
           setPlayers(response.players || []);
         })
-        .catch((err) => {
-          // if current user token is expired, update the server
-          if (err.msg === "Invalid Token") {
-            dispatch(loginInit());
-            userLogout({ token: loggedInUser.token })
-              .then(() => {
-                localStorage.removeItem("user_id");
-                localStorage.removeItem("user_name");
-                localStorage.removeItem("user_token");
-                dispatch(loginSuccess({ userName: '', userId: '', token: '' }));
-              })
-              .catch((err) => {
-                dispatch(loginFail(err.msg))
-              });
-          }
+        .catch((error) => {
+          toast.error(error.msg);
         });
     }
   }, [dispatch, loggedInUser])

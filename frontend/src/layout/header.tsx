@@ -1,11 +1,12 @@
 import React from "react";
 import styled from 'styled-components';
 import { Link } from "react-router-dom";
+
 import logo from "../assets/images/logo.png";
-import logoSM from "../assets/images/logo-sm.png";
-import { loginFail, loginInit, loginSuccess } from "../store/reducers/user";
-import { useAppDispatch, useAppSelector } from "../hooks";
 import userLogout from "../services/userLogout";
+import logoSM from "../assets/images/logo-sm.png";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { loginFail, loginInit, loginSuccess, selectUser } from "../store/reducers/user";
 
 const Container = styled.nav`
 padding-left: 50px;
@@ -19,7 +20,7 @@ padding-right: 50px;
 
 export default function Header(): JSX.Element {
   const dispatch = useAppDispatch();
-  const loginState = useAppSelector((state) => state.user);
+  const loginState = useAppSelector(selectUser);
 
   const handleLogout = () => {
     dispatch(loginInit());

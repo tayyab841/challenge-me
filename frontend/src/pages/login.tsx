@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../layout';
 import userLogin from '../services/userLogin';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { loginInit, loginSuccess, loginFail } from '../store/reducers/user';
+import { loginInit, loginSuccess, loginFail, selectUser } from '../store/reducers/user';
 
 const Container = styled.div`
 display: flex;
@@ -20,7 +20,7 @@ justify-content: center;
 export default function Login(): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const loginState = useAppSelector(state => state.user);
+  const loginState = useAppSelector(selectUser);
 
   const handleLogin = (e: React.SyntheticEvent) => {
     e.preventDefault();

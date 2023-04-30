@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+
 import { RootState } from '..';
 import { User } from '../../common/types';
 
@@ -11,9 +12,9 @@ export interface UserState {
 const EMPTY_USER = { userId: '', userName: '', token: '' };
 
 const initialState: UserState = {
+    error: '',
     user: EMPTY_USER,
     isLoading: false,
-    error: ''
 }
 
 export const userSlice = createSlice({
@@ -21,14 +22,14 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         loginInit: (state) => {
-            state.user = EMPTY_USER;
-            state.isLoading = true;
             state.error = '';
+            state.isLoading = true;
+            state.user = EMPTY_USER;
         },
         loginSuccess: (state, action) => {
-            state.user = action.payload;
-            state.isLoading = false;
             state.error = '';
+            state.isLoading = false;
+            state.user = action.payload;
         },
         loginFail: (state, action) => {
             state.user = EMPTY_USER;

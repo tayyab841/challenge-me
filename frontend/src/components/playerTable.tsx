@@ -1,44 +1,73 @@
-import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import styled from "styled-components";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../hooks";
+
 import getPlayers from "../services/getPlayers";
+import { selectUser } from "../store/reducers/user";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import playerChallenge from "../services/playerChallenge";
+import acceptChallenges from "../services/acceptChallenge";
+import { PlayersFail, PlayersInit, PlayersSuccess, selectPlayers } from "../store/reducers/players";
 
 const Container = styled.div`
 .table-title {
     width: 100%;
     font-size: 36px;
+}
+td button {
+  width: 120px;
+  height: 30px;
 }`;
 
-interface Player {
-  id: string,
-  name: string;
-  onlineStatus: string;
-  challengeStatus: string;
-}
-
 export default function PlayerTable(): JSX.Element {
-  const [players, setPlayers] = useState<Player[]>([]);
   const navigate = useNavigate();
-  const loggedInUser = useAppSelector((state) => state.user.user);
+  const dispatch = useAppDispatch();
+  const playersState = useAppSelector(selectPlayers);
+  const loggedInUser = useAppSelector(selectUser).user;
 
   const handleResponse = (response: string, id: string, name: string) => {
-    const options = {
-      player_one: { name: loggedInUser.userName, id: loggedInUser.userId },
-      player_two: { name: name, id: id }
-    };
-    navigate('/game', { state: options });
+    if (response === 'accept') {
+      acceptChallenges({ token: loggedInUser.token, challengerId: id })
+        .then((response) => {
+          toast('Challenge Accepted!');
+          const options = {
+            playerOne: { name: loggedInUser.userName, id: loggedInUser.userId },
+            playerTwo: { name: name, id: id }
+          };
+          navigate('/game', { state: options });
+        });
+      return;
+    }
+
+    if (response === 'challenge') {
+      playerChallenge({ token: loggedInUser.token, challengedId: id })
+        .then((response) => {
+          getPlayers({ token: loggedInUser.token })
+            .then((response) => {
+              dispatch(PlayersSuccess(response.players));
+            })
+            .catch(error => {
+              dispatch(PlayersFail(error.msg));
+            });
+          toast.success(response.msg);
+        })
+        .catch((error) => {
+          toast.error(error.msg);
+        })
+    }
   }
 
   useEffect(() => {
+    dispatch(PlayersInit());
     getPlayers({ token: loggedInUser.token })
       .then((response) => {
-        setPlayers(response.players || []);
+        dispatch(PlayersSuccess(response.players));
       })
       .catch(error => {
-        console.log(error);
+        dispatch(PlayersFail(error.msg));
       })
-  }, [loggedInUser])
+  }, [dispatch, loggedInUser]);
 
   return (
     <Container>
@@ -54,23 +83,19 @@ export default function PlayerTable(): JSX.Element {
           </tr>
         </thead>
         <tbody>
-          {players.map((player) => (
+          {playersState.players.map((player) => (
             <tr key={player.id}>
               <th scope="row">{player.name}</th>
               <td>{player.onlineStatus}</td>
               <td>
-                {player.challengeStatus === 'accept' || player.challengeStatus === 'challenge' ?
-                  (
-                    <button
-                      type="button"
-                      onClick={() => handleResponse(player.challengeStatus, player.id, player.name)}
-                      className="btn btn-outline-primary text-white border-white"
-                    >
-                      <div className="text-capitalize">{player.challengeStatus}</div>
-                    </button>
-                  ) : (
-                    <p>Response Pending</p>
-                  )}
+                <button
+                  type="button"
+                  disabled={player.challengeStatus === 'pending' || playersState.isLoading}
+                  className="py-0 btn btn-outline-primary text-white border-white"
+                  onClick={() => handleResponse(player.challengeStatus, player.id, player.name)}
+                >
+                  <div className="text-capitalize">{player.challengeStatus}</div>
+                </button>
               </td>
             </tr>
           ))}

@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import express, { Express, Request, Response } from 'express';
 
 import authRoutes from './routes/authRoutes';
+import gameRoutes from './routes/gameRoutes';
 import playerRoutes from './routes/playerRoutes';
 import challengeRoutes from './routes/challengeRoutes';
 
@@ -24,7 +25,8 @@ app.use(express.json());
 app.use(express.static('build'));
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/auth/', authRoutes);
+app.use('/auth', authRoutes);
+app.use('/games', gameRoutes);
 app.use('/player', playerRoutes);
 app.use('/challenge', challengeRoutes);
 

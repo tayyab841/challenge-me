@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import Player from '../models/player';
 import { getToken } from '../utilities/getToken';
 
-// user actions
+// auth actions
 export async function userSignup(req: Request, res: Response) {
     const { name, email, password } = req.body;
 

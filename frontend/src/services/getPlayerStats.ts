@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { Player } from '../common/types';
 
 interface Response {

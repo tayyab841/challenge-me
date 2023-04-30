@@ -1,13 +1,14 @@
 import express from 'express';
+
 import {
-    getChallenges,
+    acceptChallenge,
     newChallenge
 } from '../controllers/challengeController'
 import verifyToken from '../middlewares/authMiddleware';
 
 const router = express.Router();
 
-router.get('/all', verifyToken, getChallenges);
 router.post('/create', verifyToken, newChallenge);
+router.post('/accept', verifyToken, acceptChallenge);
 
 export = router;

@@ -1,7 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import ReactDOM from 'react-dom/client';
+import { ToastContainer } from 'react-toastify';
+import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 
 import Home from './pages/home';
 import { store } from './store';
@@ -16,6 +17,15 @@ const root = ReactDOM.createRoot(
 root.render(
   <Provider store={store}>
     <React.StrictMode>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        pauseOnFocusLoss
+        pauseOnHover
+        theme="light" />
       <Router>
         <Routes>
           <Route path='/' element={<Home />} />

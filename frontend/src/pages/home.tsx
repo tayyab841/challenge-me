@@ -1,14 +1,12 @@
+import React from 'react';
 import styled from 'styled-components';
-import React, { useEffect, useState } from 'react';
 
 import Layout from '../layout';
-import { Challenge } from '../common/types';
-import { useAppDispatch, useAppSelector } from '../hooks';
+import { useAppSelector } from '../hooks';
+import GameTable from '../components/gameTable';
 import StatsTable from '../components/StatsTable';
 import PlayerTable from '../components/playerTable';
-import getChallenges from '../services/getChallenges';
-import ChallengeTable from '../components/challengeTable';
-import getPlayers from '../services/getPlayers';
+import { selectUser } from '../store/reducers/user';
 
 const Container = styled.div`
 color: white;
@@ -19,38 +17,8 @@ align-content: center;
 flex-direction: column;
 justify-content: center;`;
 
-interface Player {
-  id: string,
-  name: string;
-  onlineStatus: string;
-  challengeStatus: string;
-}
-
 export default function Home(): JSX.Element {
-  const dispatch = useAppDispatch();
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [challenges, setChallenges] = useState<Challenge[]>([]);
-  const loggedInUser = useAppSelector((state) => state.user.user);
-
-  useEffect(() => {
-    if (loggedInUser.token) {
-      getChallenges({ token: loggedInUser.token })
-        .then((response) => {
-          setChallenges(response.challengs || []);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      getPlayers({ token: loggedInUser.token })
-        .then((response) => {
-          setPlayers(response.players || []);
-        })
-        .catch(error => {
-          console.log(error);
-        })
-    }
-  }, [dispatch, loggedInUser]);
+  const loggedInUser = useAppSelector(selectUser).user;
 
   return (
     <Layout>
@@ -70,7 +38,7 @@ export default function Home(): JSX.Element {
             </div>
             <div className='row w-100'>
               <div className='col col-lg-4'>
-                <ChallengeTable challenges={challenges} />
+                <GameTable />
               </div>
             </div>
           </React.Fragment>
