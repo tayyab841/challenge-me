@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Player } from "../common/types";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../hooks";
+import getPlayers from "../services/getPlayers";
 
 const Container = styled.div`
 .table-title {
@@ -8,12 +10,36 @@ const Container = styled.div`
     font-size: 36px;
 }`;
 
-interface Props {
-  players: Player[];
+interface Player {
+  id: string,
+  name: string;
+  onlineStatus: string;
+  challengeStatus: string;
 }
 
-export default function PlayerTable(props: Props): JSX.Element {
-  const { players } = props;
+export default function PlayerTable(): JSX.Element {
+  const [players, setPlayers] = useState<Player[]>([]);
+  const navigate = useNavigate();
+  const loggedInUser = useAppSelector((state) => state.user.user);
+
+  const handleResponse = (response: string, id: string, name: string) => {
+    const options = {
+      player_one: { name: loggedInUser.userName, id: loggedInUser.userId },
+      player_two: { name: name, id: id }
+    };
+    navigate('/game', { state: options });
+  }
+
+  useEffect(() => {
+    getPlayers({ token: loggedInUser.token })
+      .then((response) => {
+        setPlayers(response.players || []);
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }, [loggedInUser])
+
   return (
     <Container>
       <table className="table text-white">
@@ -29,11 +55,22 @@ export default function PlayerTable(props: Props): JSX.Element {
         </thead>
         <tbody>
           {players.map((player) => (
-            <tr key={player._id}>
+            <tr key={player.id}>
               <th scope="row">{player.name}</th>
-              <td>{player.status}</td>
+              <td>{player.onlineStatus}</td>
               <td>
-                <button disabled={player.status === 'offline'} className="btn btn-outline-primary text-white border-white" type="button">Challenge</button>
+                {player.challengeStatus === 'accept' || player.challengeStatus === 'challenge' ?
+                  (
+                    <button
+                      type="button"
+                      onClick={() => handleResponse(player.challengeStatus, player.id, player.name)}
+                      className="btn btn-outline-primary text-white border-white"
+                    >
+                      <div className="text-capitalize">{player.challengeStatus}</div>
+                    </button>
+                  ) : (
+                    <p>Response Pending</p>
+                  )}
               </td>
             </tr>
           ))}

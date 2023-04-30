@@ -1,17 +1,21 @@
 import request from 'supertest';
 
 import app from '../app';
-import User from '../models/user';
+import User from '../models/player';
 
 const clearDatabase = async () => {
     try {
-        await User.deleteMany({ email: { $in : [
-                'user@test.com',
-                'newuser@test.com',
-                'user@othertest.com'
-            ]}});
+        await User.deleteMany({
+            email: {
+                $in: [
+                    'user@test.com',
+                    'newuser@test.com',
+                    'user@othertest.com'
+                ]
+            }
+        });
     } catch (err) {
-        console.log("error in clearing database:",err);
+        console.log("error in clearing database:", err);
     }
 }
 

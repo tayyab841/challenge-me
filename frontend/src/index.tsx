@@ -8,6 +8,7 @@ import { store } from './store';
 import Login from './pages/login';
 import Signup from './pages/signup';
 import './assets/stylesheets/index.css';
+import Game from './pages/game';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -20,6 +21,7 @@ root.render(
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
+          <Route path='/game' element={<Game />} />
         </Routes>
       </Router>
     </React.StrictMode>

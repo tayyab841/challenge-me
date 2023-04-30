@@ -3,8 +3,9 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import express, { Express, Request, Response } from 'express';
 
-import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
+import playerRoutes from './routes/playerRoutes';
+import challengeRoutes from './routes/challengeRoutes';
 
 dotenv.config();
 const app: Express = express();
@@ -23,7 +24,8 @@ app.use(express.json());
 app.use(express.static('build'));
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/user/', userRoutes);
 app.use('/auth/', authRoutes);
+app.use('/player', playerRoutes);
+app.use('/challenge', challengeRoutes);
 
 export default app;

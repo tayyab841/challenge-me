@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Player } from "../common/types";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import getPlayerStats from "../services/getPlayerStats";
+import { loginFail, loginInit, loginSuccess } from "../store/reducers/user";
+import userLogout from "../services/userLogout";
 
 const Container = styled.div`
 .table-title {
@@ -8,14 +12,37 @@ const Container = styled.div`
     font-size: 36px;
 }`;
 
-interface Props {
-  players: Player[];
-}
-
-export default function StatsTable(props: Props): JSX.Element {
-  const { players } = props;
+export default function StatsTable(): JSX.Element {
+  const [players, setPlayers] = useState<Player[]>([]);
+  const loggedInUser = useAppSelector(state => state.user.user);
+  const dispatch = useAppDispatch();
 
   let rank = 0;
+
+  useEffect(() => {
+    if (loggedInUser.token) {
+      getPlayerStats({ token: loggedInUser.token })
+        .then((response) => {
+          setPlayers(response.players || []);
+        })
+        .catch((err) => {
+          // if current user token is expired, update the server
+          if (err.msg === "Invalid Token") {
+            dispatch(loginInit());
+            userLogout({ token: loggedInUser.token })
+              .then(() => {
+                localStorage.removeItem("user_id");
+                localStorage.removeItem("user_name");
+                localStorage.removeItem("user_token");
+                dispatch(loginSuccess({ userName: '', userId: '', token: '' }));
+              })
+              .catch((err) => {
+                dispatch(loginFail(err.msg))
+              });
+          }
+        });
+    }
+  }, [dispatch, loggedInUser])
 
   return (
     <Container>
@@ -39,7 +66,7 @@ export default function StatsTable(props: Props): JSX.Element {
                 <th scope="row">{rank}</th>
                 <td>{player.name}</td>
                 <td>{player.games_played}</td>
-                <td>{player.win_percentage}</td>
+                <td>{player.games_played > 0 ? (player.games_won / player.games_played) * 100 : 0}</td>
               </tr>
             )
           })}

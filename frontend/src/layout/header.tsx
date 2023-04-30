@@ -5,7 +5,7 @@ import logo from "../assets/images/logo.png";
 import logoSM from "../assets/images/logo-sm.png";
 import { loginFail, loginInit, loginSuccess } from "../store/reducers/user";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import userLogout from "../services/userlogout";
+import userLogout from "../services/userLogout";
 
 const Container = styled.nav`
 padding-left: 50px;
@@ -32,7 +32,7 @@ export default function Header(): JSX.Element {
       })
       .catch((err) => {
         dispatch(loginFail(err.msg))
-      })
+      });
   }
 
   return (

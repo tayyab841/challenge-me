@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from 'express';
-import User from "../models/user";
+import User from "../models/player";
 
 const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   const { token: bodyToken } = req.body;
