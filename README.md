@@ -1,2 +1,2 @@
 # Challenge Me
-A multiplayer Chess in React
+A multiplayer Board game boiler plate in React
