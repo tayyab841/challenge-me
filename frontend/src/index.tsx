@@ -4,12 +4,15 @@ import ReactDOM from 'react-dom/client';
 import { ToastContainer } from 'react-toastify';
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 
-import Home from './pages/home';
 import { store } from './store';
-import Login from './pages/login';
-import Signup from './pages/signup';
-import './assets/stylesheets/index.css';
+import Home from './pages/home';
 import Game from './pages/game';
+import Login from './pages/login';
+import Games from './pages/games';
+import Stats from './pages/stats';
+import Signup from './pages/signup';
+import Players from './pages/players';
+import './assets/stylesheets/index.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -29,9 +32,12 @@ root.render(
       <Router>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
           <Route path='/game' element={<Game />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/games' element={<Games />} />
+          <Route path='/stats' element={<Stats />} />
+          <Route path='/signup' element={<Signup />} />
+          <Route path='/players' element={<Players />} />
         </Routes>
       </Router>
     </React.StrictMode>
