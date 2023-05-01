@@ -43,3 +43,36 @@ export async function getGames(req: Request, res: Response) {
     res.status(500).json("Something went wrong!");
   }
 }
+
+export async function endGame(req: Request, res: Response) {
+  const { gameId, winnerId, losserId, drawn } = req.body;
+
+  try {
+    const winner = await Player.findOne({ _id: winnerId }).exec();
+    const losser = await Player.findOne({ _id: losserId }).exec();
+
+    if (!winner || !losser) {
+      return res.status(400).json("Wrong player Ids.");
+    }
+
+    const winnerPercentage = Math.round(((winner.games_won + (drawn ? 0 : 1)) / (winner.games_played + 1)) * 100);
+    const losserPercentage = Math.round(((losser.games_won) / (losser.games_played + 1)) * 100);
+
+    Game.findByIdAndUpdate(gameId, { in_progress: false, winner: winnerId })
+      .then(game => game?.save())
+      .catch(error => console.log(error));
+
+    Player.findByIdAndUpdate(losserId, { $inc: { games_played: 1 }, win_percentage: losserPercentage })
+      .then(losser => losser?.save())
+      .catch(error => console.log(error));
+
+    Player.findByIdAndUpdate(winnerId, { $inc: { games_played: 1, games_won: drawn ? 0 : 1 }, win_percentage: winnerPercentage })
+      .then(winner => winner?.save())
+      .catch(error => console.log(error));
+
+    // res.status(200).json(winner?.name + ' Wins & ' + losser?.name + ' Loses');
+    res.status(200).json('Game result Recorded!');
+  } catch (error) {
+    res.status(500).json(error);
+  }
+}

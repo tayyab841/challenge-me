@@ -10,7 +10,6 @@ import { loginSuccess } from '../store/reducers/user';
 const Container = styled.div`
 display: flex;
 flex-wrap: wrap;
-margin-top: 120px;
 align-content: center;
 flex-direction: column;
 justify-content: center;

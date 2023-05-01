@@ -9,6 +9,7 @@ const PlayerSchema = new Schema({
   games_played: { type: Number, min: 0, default: 0 },
   games_won: { type: Number, min: 0, default: 0 },
   status: { type: String, enum: ['online', 'offline'], default: 'offline' },
+  win_percentage: { type: Number, min: 0, max: 100, default: 0 }
 });
 
 // Export model

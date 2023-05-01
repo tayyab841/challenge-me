@@ -23,15 +23,19 @@ td button {
 export default function Games(): JSX.Element {
   const navigate = useNavigate();
   const [games, setGames] = useState<Game[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const loggedInUser = useAppSelector(selectUser).user;
 
   useEffect(() => {
     if (loggedInUser.token) {
+      setIsLoading(true);
       getGames({ token: loggedInUser.token })
         .then((response) => {
+          setIsLoading(false);
           setGames(response.games || []);
         })
         .catch((error) => {
+          setIsLoading(false);
           toast.error(error.msg);
         });
     }
@@ -55,20 +59,36 @@ export default function Games(): JSX.Element {
             </tr>
           </thead>
           <tbody>
-            {games.map((game) => (
-              <tr key={game.id}>
-                <th scope="row">{loggedInUser.userName === game.playerOne.name ? game.playerTwo.name : game.playerOne.name}</th>
-                <td>
-                  <button
-                    type="button"
-                    className="btn btn-outline-primary text-white border-white"
-                    onClick={() => navigateToGame(game)}
-                  >
-                    Go to Game
-                  </button>
-                </td>
+            {isLoading ? (
+              <tr>
+                <td colSpan={2} className="text-center">Loading ...</td>
               </tr>
-            ))}
+            ) : (
+              <React.Fragment>
+                {games.length === 0 ? (
+                  <tr>
+                    <td colSpan={2} className="text-center">No ongoing games! Start challenging other.</td>
+                  </tr>
+                ) : (
+                  <React.Fragment>
+                    {games.map((game) => (
+                      <tr key={game.id}>
+                        <th scope="row">{loggedInUser.userName === game.playerOne.name ? game.playerTwo.name : game.playerOne.name}</th>
+                        <td>
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary text-white border-white"
+                            onClick={() => navigateToGame(game)}
+                          >
+                            Go to Game
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </React.Fragment>
+                )}
+              </React.Fragment>
+            )}
           </tbody>
         </table>
       </Container>

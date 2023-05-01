@@ -5,7 +5,7 @@ import Challenge from '../models/challenge';
 
 export async function getPlayerStats(req: Request, res: Response) {
   try {
-    const allUsers = await Player.find({}, 'name games_played games_won status').limit(5).exec();
+    const allUsers = await Player.find({}, 'name games_played games_won status win_percentage').sort({ 'win_percentage': 'desc' }).limit(5).exec();
     res.status(200).json(allUsers);
   } catch (error) {
     res.status(500).json("Something went wrong!");

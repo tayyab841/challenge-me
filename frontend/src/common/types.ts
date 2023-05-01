@@ -4,6 +4,7 @@ export interface Player {
   status: string;
   games_won: number;
   games_played: number;
+  win_percentage: number;
 }
 
 export interface User {

@@ -25,9 +25,9 @@ justify-content: center;
 }`;
 
 const LINKS = [
-  { link: '/games', title: 'Your Games' },
+  { link: '/stats', title: 'Stats' },
   { link: '/players', title: 'Players' },
-  { link: '/stats', title: 'Stats' }
+  { link: '/games', title: 'Your Games' }
 ];
 
 export default function Home(): JSX.Element {

@@ -61,14 +61,16 @@ export default function Players(): JSX.Element {
   }
 
   useEffect(() => {
-    dispatch(PlayersInit());
-    getPlayers({ token: loggedInUser.token })
-      .then((response) => {
-        dispatch(PlayersSuccess(response.players));
-      })
-      .catch(error => {
-        dispatch(PlayersFail(error.msg));
-      })
+    if (loggedInUser.token) {
+      dispatch(PlayersInit());
+      getPlayers({ token: loggedInUser.token })
+        .then((response) => {
+          dispatch(PlayersSuccess(response.players));
+        })
+        .catch(error => {
+          dispatch(PlayersFail(error.msg));
+        });
+    }
   }, [dispatch, loggedInUser]);
 
   return (
@@ -86,22 +88,46 @@ export default function Players(): JSX.Element {
             </tr>
           </thead>
           <tbody>
-            {playersState.players.map((player) => (
-              <tr key={player.id}>
-                <th scope="row">{player.name}</th>
-                <td>{player.onlineStatus}</td>
-                <td>
-                  <button
-                    type="button"
-                    disabled={player.challengeStatus === 'pending' || playersState.isLoading}
-                    className="py-0 btn btn-outline-primary text-white border-white"
-                    onClick={() => handleResponse(player.challengeStatus, player.id, player.name)}
-                  >
-                    <div className="text-capitalize">{player.challengeStatus}</div>
-                  </button>
-                </td>
+            {playersState.isLoading ? (
+              <tr>
+                <td colSpan={3} className="text-center">Loading ...</td>
               </tr>
-            ))}
+            ) : (
+              <React.Fragment>
+                {playersState.error ? (
+                  <tr>
+                    <td colSpan={3}>Error Loading Players Data</td>
+                  </tr>
+                ) : (
+                  <React.Fragment>
+                    {playersState.players.length === 0 ? (
+                      <tr>
+                        <td colSpan={3}>Its just you here! No other players.</td>
+                      </tr>
+                    ) : (
+                      <React.Fragment>
+                        {playersState.players.map((player) => (
+                          <tr key={player.id}>
+                            <th scope="row">{player.name}</th>
+                            <td>{player.onlineStatus}</td>
+                            <td>
+                              <button
+                                type="button"
+                                disabled={player.challengeStatus === 'pending' || playersState.isLoading}
+                                className="py-0 btn btn-outline-primary text-white border-white"
+                                onClick={() => handleResponse(player.challengeStatus, player.id, player.name)}
+                              >
+                                <div className="text-capitalize">{player.challengeStatus}</div>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </React.Fragment>
+                    )}
+                  </React.Fragment>
+                )}
+              </React.Fragment>
+            )}
           </tbody>
         </table>
       </Container>

@@ -18,17 +18,21 @@ width: 800px;
 export default function Stats(): JSX.Element {
   const dispatch = useAppDispatch();
   const [players, setPlayers] = useState<Player[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const loggedInUser = useAppSelector(selectUser).user;
 
   let rank = 0;
 
   useEffect(() => {
     if (loggedInUser.token) {
+      setIsLoading(true);
       getPlayerStats({ token: loggedInUser.token })
         .then((response) => {
+          setIsLoading(false);
           setPlayers(response.players || []);
         })
         .catch((error) => {
+          setIsLoading(false);
           toast.error(error.msg);
         });
     }
@@ -50,17 +54,33 @@ export default function Stats(): JSX.Element {
             </tr>
           </thead>
           <tbody>
-            {players.map((player) => {
-              rank++;
-              return (
-                <tr key={player._id}>
-                  <th scope="row">{rank}</th>
-                  <td>{player.name}</td>
-                  <td>{player.games_played}</td>
-                  <td>{player.games_played > 0 ? (player.games_won / player.games_played) * 100 : 0}</td>
-                </tr>
-              )
-            })}
+            {isLoading ? (
+              <tr>
+                <td colSpan={4} className="text-center">Loading ...</td>
+              </tr>
+            ) : (
+              <React.Fragment>
+                {players.length === 0 ? (
+                  <tr>
+                    <td colSpan={4}>No Players!</td>
+                  </tr>
+                ) : (
+                  <React.Fragment>
+                    {players.map((player) => {
+                      rank++;
+                      return (
+                        <tr key={player._id}>
+                          <th scope="row">{rank}</th>
+                          <td>{player.name}</td>
+                          <td>{player.games_played}</td>
+                          <td>{player.win_percentage}</td>
+                        </tr>
+                      )
+                    })}
+                  </React.Fragment>
+                )}
+              </React.Fragment>
+            )}
           </tbody>
         </table>
       </Container>
