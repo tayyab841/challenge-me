@@ -15,31 +15,34 @@ export async function getPlayerStats(req: Request, res: Response) {
 export async function getPlayers(req: Request, res: Response) {
   const requestingUser = res.locals.signedInUser;
 
-  try {
-    const allPlayers = await Player.find({ _id: { $nin: [requestingUser._id] } }).exec();
-    const challengePending = await Challenge.find({ player_one: requestingUser }).exec();
-    const accepChallenges = await Challenge.find({ player_two: requestingUser }).exec();
+  Promise.all([
+    Player.find({ _id: { $nin: [requestingUser._id] } }).exec(),
+    Challenge.find({ player_one: requestingUser }).exec(),
+    Challenge.find({ player_two: requestingUser }).exec()
+  ])
+    .then((responses) => {
+      const allPlayers = responses[0];
+      const challengePending = responses[1];
+      const accepChallenges = responses[2];
 
-    const whoHasNotResponded = challengePending.map((challenge) => challenge.player_two?.toString());
-    const toWhomIHaveNotResponded = accepChallenges.map((challenge) => challenge.player_one?.toString());
+      const whoHasNotResponded = challengePending.map((challenge) => challenge.player_two?.toString());
+      const toWhomIHaveNotResponded = accepChallenges.map((challenge) => challenge.player_one?.toString());
 
-    // no challenge related to you => challenge
-    // challenges you sent and waiting response => pending
-    // challenges your received and need to responsd => accept
-    const formattedPlayers = allPlayers.map((player) => {
-      const challengeStatus = whoHasNotResponded.includes(player._id.toString())
-        ? 'pending' : toWhomIHaveNotResponded.includes(player._id.toString()) ? 'accept' : 'challenge';
-      return ({
-        id: player._id,
-        name: player.name,
-        onlineStatus: player.status,
-        challengeStatus: challengeStatus
+      const formattedPlayers = allPlayers.map((player) => {
+        const challengeStatus = whoHasNotResponded.includes(player._id.toString())
+          ? 'pending' : toWhomIHaveNotResponded.includes(player._id.toString()) ? 'accept' : 'challenge';
+        return ({
+          id: player._id,
+          name: player.name,
+          onlineStatus: player.status,
+          challengeStatus: challengeStatus
+        });
       });
-    });
 
-    res.status(200).json(formattedPlayers);
-  }
-  catch (error) {
-    res.status(400).json(error);
-  }
+      res.status(200).json(formattedPlayers);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    })
+
 }

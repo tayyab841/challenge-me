@@ -42,8 +42,8 @@ export default function Signup(): JSX.Element {
         dispatch(loginSuccess({ userName: response.userName, userId: response.userId, token: response.token }));
         navigate('/');
       })
-      .catch(function (error) {
-        setError(error.response.data)
+      .catch((error) => {
+        setError(error.msg);
         setLoading(false);
       });
   }

@@ -23,16 +23,14 @@ export async function acceptChallenge(req: Request, res: Response) {
   const playerId = res.locals.signedInUser;
   const { challengerId } = req.body;
 
-  try {
-    const response = await Challenge.deleteOne({ player_two: playerId, player_one: challengerId });
-    if (response.deletedCount === 0) {
-      return res.status(400).json("Challenge acceptance failed!");
-    }
-
-    const game = await Game.create({ player_one: challengerId, player_two: playerId });
-    res.status(200).json({ playerOne: game.player_one, playerTwo: game.player_two });
-  }
-  catch (error) {
-    res.status(400).json("Something Went wrong!");
-  }
+  Promise.all([
+    Challenge.deleteOne({ player_two: playerId, player_one: challengerId }),
+    Game.create({ player_one: challengerId, player_two: playerId })
+  ])
+    .then((responses) => {
+      res.status(200).json("Challenge Accepted!");
+    })
+    .catch((error) => {
+      res.status(400).json("Something Went wrong!");
+    });
 }

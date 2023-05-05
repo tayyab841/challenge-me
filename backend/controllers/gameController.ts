@@ -2,17 +2,12 @@ import { Request, Response } from 'express';
 
 import Game from '../models/game';
 import Player from '../models/player';
-
-interface Game {
-  id: string;
-  playerOne: { id: string | undefined; name: string | undefined };
-  playerTwo: { id: string | undefined; name: string | undefined };
-}
+import { Game as GameType } from '../common/types';
 
 export async function getGames(req: Request, res: Response) {
   const playerId = res.locals.signedInUser;
   try {
-    const allGames: Game[] = [];
+    const allGames: GameType[] = [];
     const challengerGames = await Game.find({ player_one: playerId, in_progress: true });
     const challenger = await Player.findOne({ _id: playerId }).exec();
     const challengedIds = challengerGames.map((game) => game.player_two?.toString());
